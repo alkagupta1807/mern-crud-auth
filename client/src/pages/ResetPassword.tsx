@@ -20,7 +20,7 @@ const ResetPassword = () => {
   const onSubmit = async (data: { password: string; confirmPassword?: string }) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:4000/api/auth/reset-password/${token}`, {
+      const response = await fetch(`https://mern-crud-auth-hzrx.onrender.com/api/auth/reset-password/${token}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
