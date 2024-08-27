@@ -31,7 +31,7 @@ app.get("/api/test", async (req, res) => {
 });
 
 
-
+app.use(express.static(path.join(__dirname, "../client/dist")));
 app.use('/uploads', express.static('uploads'));
 
 app.use("/api/auth",require("./app/routes/userAuth.routes"))
