@@ -88,36 +88,38 @@ try {
 }
 
 const deleteProductById=async(req,res)=>{
-   try {
-      const id=req.params.id;
-
-        // Find the product by ID
-        const product = await findProductById(id);
-        if (!product) {
-            return res.status(404).json({ message: "Product not found" });
+    try {
+        const id=req.params.id;
+        const product=await Product.findById(id);
+        if(!product){
+            return res.status(404).json({message:"Product not found"})
         }
 
-         // Delete images from the filesystem
-         if (product.imageUrls && product.imageUrls.length > 0) {
-            product.imageUrls.forEach(image => {
-                const imagePath = path.join(__dirname, "../", "../", "../", "uploads", image);
-                if (fs.existsSync(imagePath)) {
-                    fs.unlinkSync(imagePath);
+         //delete the image from the filesystem
+         if(product.imageUrls && product.imageUrls.length>0){
+            product.imageUrls.forEach(image=>{
+                const imagePath=path.join(__dirname,"../","../","../","../","uploads",image)
+                if(fs.existsSync(imagePath)){
+                    fs.unlinkSync(imagePath)
                 }
-            });
-        }
+            })
 
-        // Mark the product as deleted by setting deletedAt
+         }
+         
+        //set the deletedAt field to the current timestamp
+       
         product.deletedAt = new Date();
-        await saveProduct(product);
+        //save the product with the updated deletedAt field
+        await product.save()
+        res.status(200).json({message:"product deleted successfully",product})
 
-        res.status(200).json({ message: "Product deleted successfully", product });
+       
+        
+    } catch (error) {
+        console.error("Error deleting product:", error); 
+        res.status(500).json({message:"something went wrong"})  
+    }
 
-   } catch (error) {
-      console.error("Error deleting product:", error);
-      res.status(500).json({ message: "Something went wrong" });
-      
-   }
 }
 const filter = async (req, res) => {
    try {
