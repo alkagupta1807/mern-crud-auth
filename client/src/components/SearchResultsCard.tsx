@@ -61,7 +61,7 @@ const SearchResultsCard = ({ product }: Props) => {
         <div className="relative w-full  h-64 overflow-hidden mb-4">
           {product.imageUrls && product.imageUrls.length > 0 && (
             <img
-              src={`http://localhost:4000/uploads/${product.imageUrls[0]}`}
+              src={`https://mern-crud-auth-hzrx.onrender.com/uploads/${product.imageUrls[0]}`}
               alt={product.name}
               className=" absolute inset-0 w-full h-auto object-cover object-center rounded-lg"
             />
