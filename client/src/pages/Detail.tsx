@@ -39,7 +39,7 @@ const Detail = () => {
                         {product.imageUrls.map((image) => (
                             <div key={image} className="w-full h-[500px]">
                                 <img 
-                                    src={`http://localhost:4000/uploads/${image}`} 
+                                    src={`https://mern-crud-auth-hzrx.onrender.com/uploads/${image}`} 
                                     alt={product.name} 
                                     className=" rounded-md w-full h-auto object-cover object-center" 
                                 />
