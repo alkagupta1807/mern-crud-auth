@@ -1,6 +1,8 @@
-const {getAllProducts,getProductById,
-   updateProductById,findProductById,saveProduct,findProductsByQuery,
-   saveProductData} =require("../products/repository/product.repository")
+const {
+   updateById,findProductById,saveProduct,findProductsByQuery,
+   saveProductData,
+   getAll,
+   getById} =require("../products/repository/product.repository")
 
 
 const createProduct=async(req,res)=>{
@@ -28,7 +30,7 @@ const createProduct=async(req,res)=>{
 
 const getAllProducts=async(req,res)=>{
    try {
-      const products=await getAllProducts();
+      const products=await getAll();
       res.json(products)
    } catch (error) {
       res.status(500).json({ message: "Error fetching products" });
@@ -37,7 +39,7 @@ const getAllProducts=async(req,res)=>{
 const getProductById=async(req,res)=>{
    try {
       const id=req.params.id;
-      const product=await getProductById(id);
+      const product=await getById(id);
       if(!product){
          return res.status(404).json({message:"Product not found"})
       }
@@ -54,7 +56,7 @@ try {
    const updatedProductData=req.body;
    const imageFiles=req.files;
    //fetch the product before updating to get the current image urls
-   let product=await getProductById(id)
+   let product=await getById(id)
    if(!product){
       return res.status(404).json({ message: "Product not found" });
    }
@@ -72,7 +74,7 @@ try {
           }
       });
        // Update product fields excluding imageUrls and save
-       product = await updateProductById(id,
+       product = await updateById(id,
           { ...updatedProductData, imageUrls: [...updatedImageUrls, ...(updatedProductData.imageUrls || [])] });
 
        res.status(201).json(product);
