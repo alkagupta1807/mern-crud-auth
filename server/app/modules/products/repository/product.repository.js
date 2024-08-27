@@ -4,14 +4,14 @@ const saveProductData=async(productData)=>{
     const product=new Product(productData);
     return await product.save()
 }
-const getAllProducts=async()=>{
+const getAll=async()=>{
     return await Product.find({deletedAt:null})
 }
 
-const getProductById=async(id)=>{
+const getById=async(id)=>{
     return await Product.findOne({_id:id})
 }
-const updateProductById=async(id,updateData)=>{
+const updateById=async(id,updateData)=>{
     return await Product.findByIdAndUpdate(id,updateData,{new:true})
 
 }
@@ -32,5 +32,5 @@ const findProductsByQuery = async (query) => {
 
 
 
-module.exports={saveProductData,getAllProducts,getProductById,
-    updateProductById,findProductById,saveProduct,findProductsByQuery}
+module.exports={saveProductData,getAll,getById,
+    updateById,findProductById,saveProduct,findProductsByQuery}
