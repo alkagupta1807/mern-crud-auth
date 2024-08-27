@@ -61,7 +61,7 @@ const Header = () => {
               </Link> 
               {user && (
                 <img
-                  src={`http://localhost:4000/uploads/${user?.image}`} 
+                  src={`https://mern-crud-auth-hzrx.onrender.com/uploads/${user?.image}`} 
                   alt="Profile"
                   className="w-10 h-10 rounded-full cursor-pointer"
                   onClick={toggleDropdown}
