@@ -1,5 +1,6 @@
+const {createProduct,getAllProducts,getProductById,
+   updateProductById,findProductById,saveProduct,findProductsByQuery} =require("../products/repository/product.repository")
 
-const productRepository=require("../products/repository/product.repository")
 
 const createProduct=async(req,res)=>{
    try {
@@ -16,7 +17,7 @@ const createProduct=async(req,res)=>{
       price,
       imageUrls
     }
-    const product=await productRepository.createProduct(productData);
+    const product=await createProduct(productData);
     res.status(201).json({product})
     
    } catch (error) {
@@ -26,7 +27,7 @@ const createProduct=async(req,res)=>{
 
 const getAllProducts=async(req,res)=>{
    try {
-      const products=await productRepository.getAllProducts();
+      const products=await getAllProducts();
       res.json(products)
    } catch (error) {
       res.status(500).json({ message: "Error fetching products" });
@@ -35,7 +36,7 @@ const getAllProducts=async(req,res)=>{
 const getProductById=async(req,res)=>{
    try {
       const id=req.params.id;
-      const product=await productRepository.getProductById(id);
+      const product=await getProductById(id);
       if(!product){
          return res.status(404).json({message:"Product not found"})
       }
@@ -52,7 +53,7 @@ try {
    const updatedProductData=req.body;
    const imageFiles=req.files;
    //fetch the product before updating to get the current image urls
-   let product=await productRepository.getProductById(id)
+   let product=await getProductById(id)
    if(!product){
       return res.status(404).json({ message: "Product not found" });
    }
@@ -70,7 +71,7 @@ try {
           }
       });
        // Update product fields excluding imageUrls and save
-       product = await productRepository.updateProductById(id,
+       product = await updateProductById(id,
           { ...updatedProductData, imageUrls: [...updatedImageUrls, ...(updatedProductData.imageUrls || [])] });
 
        res.status(201).json(product);
@@ -88,7 +89,7 @@ const deleteProductById=async(req,res)=>{
       const id=req.params.id;
 
         // Find the product by ID
-        const product = await productRepository.findProductById(id);
+        const product = await findProductById(id);
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
@@ -105,7 +106,7 @@ const deleteProductById=async(req,res)=>{
 
         // Mark the product as deleted by setting deletedAt
         product.deletedAt = new Date();
-        await productRepository.saveProduct(product);
+        await saveProduct(product);
 
         res.status(200).json({ message: "Product deleted successfully", product });
 
@@ -140,7 +141,7 @@ const filter = async (req, res) => {
        }
 
        
-       const products = await productRepository.findProductsByQuery(constructedQuery);
+       const products = await findProductsByQuery(constructedQuery);
 
        
        res.json(products);
