@@ -1,12 +1,17 @@
 const crypto=require("crypto");
 const bcrypt=require('bcryptjs')
-const userRepository=require("../user/repository/user.repository")
-const utils=require("../../utils/utils")
+const jwt = require("jsonwebtoken");
+const utils=require("../../utils/utils");
+const { findUserByEmail, saveUser, createToken,
+   findToken, findUserByIdAndEmail, updateUserPassword,
+    findUserById, saveResetToken, findUserByResetToken, updatePasswordAndClearToken } 
+    = require("../user/repository/user.repository");
+
 
 const register = async (req, res) => {
     try {
         // Check if user already exists
-        let user = await userRepository.findUserByEmail(req.body.email);
+        let user = await findUserByEmail(req.body.email);
 
         if (user) {
             return res.status(400).json({ message: "User already exists" });
@@ -29,10 +34,10 @@ const register = async (req, res) => {
         };
 
         // Save the user
-        const savedUser = await userRepository.saveUser(user);
+        const savedUser = await saveUser(user);
 
         // Create and save the token
-        const token = await userRepository.createToken(savedUser._id);
+        const token = await createToken(savedUser._id);
 
         // Email credentials
         const senderEmail = "pg5733181@gmail.com";
@@ -63,7 +68,7 @@ const register = async (req, res) => {
 const confirmation = async (req, res) => {
     try {
         // Find the token in the database
-        const token = await userRepository.findToken(req.params.token);
+        const token = await findToken(req.params.token);
         console.log(token);
 
         if (!token) {
@@ -71,7 +76,7 @@ const confirmation = async (req, res) => {
         }
 
         // Find the user based on the token's userId and email
-        const user = await userRepository.findUserByIdAndEmail(token.userId, req.params.email);
+        const user = await findUserByIdAndEmail(token.userId, req.params.email);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -82,7 +87,7 @@ const confirmation = async (req, res) => {
 
         // Mark the user as verified and save the changes
         user.isVerified = true;
-        await userRepository.saveUser(user);
+        await saveUser(user);
 
         // Respond with success message
         return res.status(200).json({ data: user, token: token, message: "User verified successfully" });
@@ -97,7 +102,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         // Find the user by email using the repository
-        const user = await userRepository.findUserByEmail(email);
+        const user = await findUserByEmail(email);
         if (!user) {
             return res.status(400).json({ message: "User not found" });
         }
@@ -133,7 +138,7 @@ const validateToken = async (req, res) => {
         const id = req.user?._id; // The _id should be available from req.user set by the middleware
         
         if (id) {
-            const user = await userRepository.findUserById(id);
+            const user = await findUserById(id);
             if (user) {
                 return res.status(200).json({ _id: user._id });
             } else {
@@ -150,7 +155,7 @@ const validateToken = async (req, res) => {
 const userDetails = async (req, res) => {
     try {
         const id = req.user?._id;
-        const user = await userRepository.findUserById(id);
+        const user = await findUserById(id);
         
         if (!user) {
             return res.status(404).json({ message: "User not found" });
@@ -185,7 +190,7 @@ const logout = async (req, res) => {
       }
   
       // Find the user
-      const user = await userRepository.findUserById(userId);
+      const user = await findUserById(userId);
       if (!user) {
         return res.status(404).json({ success: false, message: "User not found" });
       }
@@ -194,7 +199,7 @@ const logout = async (req, res) => {
       const hashedPassword = await utils.securePassword(password);
   
       // Update the user's password
-      await userRepository.updateUserPassword(userId, hashedPassword);
+      await updateUserPassword(userId, hashedPassword);
   
       return res.status(200).json({ success: true, message: "Password updated successfully" });
     } catch (error) {
@@ -208,7 +213,7 @@ const logout = async (req, res) => {
       const { email } = req.body;
   
       // Find the user by email
-      const user = await userRepository.findUserByEmail(email);
+      const user = await findUserByEmail(email);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -222,7 +227,7 @@ const logout = async (req, res) => {
       );
   
       // Save token to user's document in the database
-      await userRepository.saveResetToken(user, resetPasswordToken);
+      await saveResetToken(user, resetPasswordToken);
   
       // Set up the email transporter
       const transporter = nodemailer.createTransport({
@@ -276,7 +281,7 @@ const logout = async (req, res) => {
       }
   
       // Find the user by reset token
-      const user = await userRepository.findUserByResetToken(token);
+      const user = await findUserByResetToken(token);
       if (!user) {
         return res.status(404).send({ message: "User not found" });
       }
@@ -286,7 +291,7 @@ const logout = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, salt);
   
       // Update the user's password and clear the reset token
-      await userRepository.updatePasswordAndClearToken(user, hashedPassword);
+      await updatePasswordAndClearToken(user, hashedPassword);
   
       res.status(200).send({ message: "Password updated successfully" });
     } catch (error) {
