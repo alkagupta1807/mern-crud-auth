@@ -49,6 +49,10 @@ app.use('/uploads', express.static('uploads'));
 app.use("/api/auth",require("./app/routes/userAuth.routes"))
 app.use("/api/products",require("./app/routes/products.routes"))
 
+app.get("*", () => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
+
 const PORT=process.env.PORT || 4000
 app.listen(PORT, () => {
   console.log(`server is running on http://localhost:4000`);
