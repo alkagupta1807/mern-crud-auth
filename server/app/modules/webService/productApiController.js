@@ -1,5 +1,6 @@
-const {createProduct,getAllProducts,getProductById,
-   updateProductById,findProductById,saveProduct,findProductsByQuery} =require("../products/repository/product.repository")
+const {getAllProducts,getProductById,
+   updateProductById,findProductById,saveProduct,findProductsByQuery,
+   saveProductData} =require("../products/repository/product.repository")
 
 
 const createProduct=async(req,res)=>{
@@ -17,7 +18,7 @@ const createProduct=async(req,res)=>{
       price,
       imageUrls
     }
-    const product=await createProduct(productData);
+    const product=await saveProductData(productData);
     res.status(201).json({product})
     
    } catch (error) {
