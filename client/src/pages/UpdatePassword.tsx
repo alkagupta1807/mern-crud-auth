@@ -24,7 +24,7 @@ const UpdatePassword = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:4000/api/auth/update-password', {
+      const response = await fetch('https://mern-crud-auth-hzrx.onrender.com/api/auth/update-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
