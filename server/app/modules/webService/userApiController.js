@@ -6,6 +6,7 @@ const { findUserByEmail, saveUser, createToken,
    findToken, findUserByIdAndEmail, updateUserPassword,
     findUserById, saveResetToken, findUserByResetToken, updatePasswordAndClearToken } 
     = require("../user/repository/user.repository");
+ const nodemailer = require("nodemailer");
 
 
 const register = async (req, res) => {
